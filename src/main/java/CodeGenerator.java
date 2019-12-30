@@ -28,6 +28,7 @@ public class CodeGenerator {
     private static String password;
     private static String dbUrl;
     private static String tableName;
+    private static String tablePrefix;
 
     private static String packageNamePrefix;
 
@@ -40,6 +41,8 @@ public class CodeGenerator {
         password = (String) myProperties.getDb().get("password");
         dbUrl = (String) myProperties.getDb().get("dbUrl");
         tableName = (String) myProperties.getDb().get("tableName");
+        tablePrefix = (String) myProperties.getDb().get("tablePrefix");
+
         packageNamePrefix = myProperties.getPackageNamePrefix();
     }
 
@@ -127,7 +130,7 @@ public class CodeGenerator {
         strategy.setCapitalMode(true)                               // 全局大写
                 .setRestControllerStyle(true)                       // 配置@RestController
                 .setNaming(NamingStrategy.underline_to_camel)       // 数据库表映射到实体的命名策略
-                .setTablePrefix("t_")                               // 设置表前缀，否则生成的文件会带表前缀
+                .setTablePrefix(tablePrefix)                               // 设置表前缀，否则生成的文件会带表前缀
                 .setSkipView(true)                                  // 跳过视图
                 .setEntityTableFieldAnnotationEnable(true)          // 生成注释
                 .setEntityLombokModel(true)                         // 启用 lombok

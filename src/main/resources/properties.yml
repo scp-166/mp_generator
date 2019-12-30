@@ -11,6 +11,8 @@ db:
   dbUrl: 127.0.0.1:3306
   # 要读取的数据库名称
   tableName: permission
+  # table表名
+  tablePrefix: sys_
 
 # 包前缀，模块名由控制台输入
 packageNamePrefix: com.example
