@@ -1,0 +1,16 @@
+# 开发者名称
+author: lyl
+
+# db信息
+db:
+  # 用户名
+  userName: root
+  # 密码
+  password: root123
+  # db 账号
+  dbUrl: 127.0.0.1:3306
+  # 要读取的数据库名称
+  tableName: permission
+
+# 包前缀，模块名由控制台输入
+packageNamePrefix: com.example
