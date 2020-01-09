@@ -27,7 +27,8 @@ public class CodeGenerator {
     private static String userName;
     private static String password;
     private static String dbUrl;
-    private static String tableName;
+    private static String dbName;
+    private static String[] tableNames;
     private static String tablePrefix;
 
     private static String packageNamePrefix;
@@ -40,7 +41,10 @@ public class CodeGenerator {
         userName = (String) myProperties.getDb().get("userName");
         password = (String) myProperties.getDb().get("password");
         dbUrl = (String) myProperties.getDb().get("dbUrl");
-        tableName = (String) myProperties.getDb().get("tableName");
+        dbName = (String) myProperties.getDb().get("dbName");
+        String temptableNames = (String) myProperties.getDb().get("tableNames");
+        temptableNames = temptableNames.replace(" ","");
+        tableNames = temptableNames.split(",");
         tablePrefix = (String) myProperties.getDb().get("tablePrefix");
 
         packageNamePrefix = myProperties.getPackageNamePrefix();
@@ -107,7 +111,7 @@ public class CodeGenerator {
         // 2. 数据源配置
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.MYSQL);
-        dataSourceConfig.setUrl("jdbc:mysql://" + dbUrl + "/" + tableName + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
+        dataSourceConfig.setUrl("jdbc:mysql://" + dbUrl + "/" + dbName + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
         dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
         dataSourceConfig.setUsername(userName);
         dataSourceConfig.setPassword(password);
@@ -124,7 +128,9 @@ public class CodeGenerator {
         // 配置自动填充字段
         List<TableFill> tableFillList = new ArrayList<>(2);
         tableFillList.add(new TableFill("create_at", FieldFill.INSERT));
+        tableFillList.add(new TableFill("create_time", FieldFill.INSERT));
         tableFillList.add(new TableFill("update_at", FieldFill.INSERT_UPDATE));
+        tableFillList.add(new TableFill("update_time", FieldFill.INSERT_UPDATE));
 
         StrategyConfig strategy = new StrategyConfig();
         strategy.setCapitalMode(true)                               // 全局大写
@@ -137,7 +143,8 @@ public class CodeGenerator {
                 .setVersionFieldName("version")                     // 设置乐观锁字段
                 .setLogicDeleteFieldName("deleted")                 // 设置逻辑删除字段
                 .setTableFillList(tableFillList)                    // 自动填充字段
-                .setInclude(scanner("表名，多个英文逗号分割").split(","));
+                // .setInclude(scanner("表名，多个英文逗号分割").split(","));
+                .setInclude(tableNames);
 
         // 5. 自定义注入配置
         InjectionConfig injectionConfig = new InjectionConfig() {

@@ -10,9 +10,11 @@ db:
   # db 账号
   dbUrl: 127.0.0.1:3306
   # 要读取的数据库名称
-  tableName: permission
+  dbName: authority
+  # 要读取的表名称，逗号分割
+  tableNames: sys_dept, sys_log, sys_permission, sys_role, sys_role_permission, sys_user, sys_user_role
   # table表名
   tablePrefix: sys_
 
 # 包前缀，模块名由控制台输入
-packageNamePrefix: com.example
+packageNamePrefix: com.nekosighed.authority

@@ -2,7 +2,9 @@
 
 ## 使用
 - 进入 `classpath` 中的 `properties.yml` 设置下属性
+  - 将表名设置也移动到该位置了
 - 进入 `CodeGenerator.java` 执行 `main` 函数即可
+  - 输入模块名
 
 ### 注意事项
 - 省事直接用了 springboot 的 web 依赖的日志...
