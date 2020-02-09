@@ -18,3 +18,5 @@ db:
 
 # 包前缀，模块名由控制台输入
 packageNamePrefix: com.nekosighed.authority
+# 模块名，会补充包前缀后面和 mapper文件夹后面
+modelName: model

@@ -22,65 +22,13 @@ public class CodeGenerator {
 
     private static MyProperties myProperties;
 
-    private static String author;
-
-    private static String userName;
-    private static String password;
-    private static String dbUrl;
-    private static String dbName;
-    private static String[] tableNames;
-    private static String tablePrefix;
-
-    private static String packageNamePrefix;
-
     static {
-        myProperties = readYml();
-        System.out.println(myProperties);
-        author = myProperties.getAuthor();
-
-        userName = (String) myProperties.getDb().get("userName");
-        password = (String) myProperties.getDb().get("password");
-        dbUrl = (String) myProperties.getDb().get("dbUrl");
-        dbName = (String) myProperties.getDb().get("dbName");
-        String temptableNames = (String) myProperties.getDb().get("tableNames");
-        temptableNames = temptableNames.replace(" ","");
-        tableNames = temptableNames.split(",");
-        tablePrefix = (String) myProperties.getDb().get("tablePrefix");
-
-        packageNamePrefix = myProperties.getPackageNamePrefix();
+        myProperties = MyProperties.readYml();
     }
 
     public static void main(String[] args) {
         Template();
     }
-
-    /**
-     * <p>
-     * 读取控制台内容
-     * </p>
-     */
-    public static String scanner(String tip) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("请输入" + tip + "：");
-        if (scanner.hasNext()) {
-            String ipt = scanner.next();
-            if (StringUtils.isNotEmpty(ipt)) {
-                return ipt;
-            }
-        }
-        throw new MybatisPlusException("请输入正确的" + tip + "！");
-    }
-
-    /**
-     * 读取 yml 文件中的数据
-     *
-     * @return
-     */
-    public static MyProperties readYml() {
-        Yaml yaml = new Yaml();
-        return yaml.loadAs(CodeGenerator.class.getResourceAsStream("/properties.yml"), MyProperties.class);
-    }
-
 
     public static void Template() {
         AutoGenerator autoGenerator = new AutoGenerator();
@@ -90,7 +38,7 @@ public class CodeGenerator {
         String projectPath = System.getProperty("user.dir");
         config
                 .setActiveRecord(false)                         // 是否支持 AR 模式
-                .setAuthor(author)
+                .setAuthor(myProperties.getAuthor())
                 .setOutputDir(projectPath + "/src/main/java")   // 文件生成位置
                 .setFileOverride(false)                         // 是否文件覆盖
                 .setIdType(IdType.AUTO)                         // 主键生成策略
@@ -111,14 +59,14 @@ public class CodeGenerator {
         // 2. 数据源配置
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.MYSQL);
-        dataSourceConfig.setUrl("jdbc:mysql://" + dbUrl + "/" + dbName + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
+        dataSourceConfig.setUrl("jdbc:mysql://" + myProperties.getDbUrl() + "/" + myProperties.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
         dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
-        dataSourceConfig.setUsername(userName);
-        dataSourceConfig.setPassword(password);
+        dataSourceConfig.setUsername(myProperties.getUserName());
+        dataSourceConfig.setPassword(myProperties.getPassword());
         // 3. 包配置
         PackageConfig packageConfig = new PackageConfig();
-        packageConfig.setModuleName(scanner("模块名"));
-        packageConfig.setParent(packageNamePrefix)                  // 设置包名, 以及各个分层的包名
+        packageConfig.setModuleName(myProperties.getModelName());
+        packageConfig.setParent(myProperties.getPackageNamePrefix())                  // 设置包名, 以及各个分层的包名
                 .setMapper("dao")
                 .setService("service")
                 .setController("controller")
@@ -136,7 +84,7 @@ public class CodeGenerator {
         strategy.setCapitalMode(true)                               // 全局大写
                 .setRestControllerStyle(true)                       // 配置@RestController
                 .setNaming(NamingStrategy.underline_to_camel)       // 数据库表映射到实体的命名策略
-                .setTablePrefix(tablePrefix)                               // 设置表前缀，否则生成的文件会带表前缀
+                .setTablePrefix(myProperties.getTablePrefix())                               // 设置表前缀，否则生成的文件会带表前缀
                 .setSkipView(true)                                  // 跳过视图
                 .setEntityTableFieldAnnotationEnable(true)          // 生成注释
                 .setEntityLombokModel(true)                         // 启用 lombok
@@ -144,7 +92,7 @@ public class CodeGenerator {
                 .setLogicDeleteFieldName("deleted")                 // 设置逻辑删除字段
                 .setTableFillList(tableFillList)                    // 自动填充字段
                 // .setInclude(scanner("表名，多个英文逗号分割").split(","));
-                .setInclude(tableNames);
+                .setInclude(myProperties.getTableNames());
 
         // 5. 自定义注入配置
         InjectionConfig injectionConfig = new InjectionConfig() {
