@@ -1,9 +1,9 @@
+package generator;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -11,11 +11,10 @@ import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
-import org.yaml.snakeyaml.Yaml;
+import generator.model.MyProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 // 演示例子，执行 main 方法控制台输入模块表名回车自动生成对应项目目录中
 public class CodeGenerator {
@@ -27,10 +26,10 @@ public class CodeGenerator {
     }
 
     public static void main(String[] args) {
-        Template();
+        doWork();
     }
 
-    public static void Template() {
+    public static void doWork() {
         AutoGenerator autoGenerator = new AutoGenerator();
         // 1. 全局配置
         GlobalConfig config = new GlobalConfig();
@@ -46,8 +45,8 @@ public class CodeGenerator {
                 .setOpen(false);                                //生成完成后是否打开文件目录
 
         config
-                .setEntityName("%sDO")                          // 设置 entity 文件名
-                .setMapperName("%sDOMapper")                    // 设置 mapper.java 文件名
+                .setEntityName("%sPO")                          // 设置 entity 文件名
+                .setMapperName("%sPOMapper")                    // 设置 mapper.java 文件名
                 .setServiceName("%sService")                    // 设置 service 的首字母不为I
                 .setXmlName(null);                              // 设置 mapper.xml 文件名,后面取消掉了
         config
@@ -59,18 +58,18 @@ public class CodeGenerator {
         // 2. 数据源配置
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.MYSQL);
-        dataSourceConfig.setUrl("jdbc:mysql://" + myProperties.getDbUrl() + "/" + myProperties.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
+        dataSourceConfig.setUrl("jdbc:mysql://" + myProperties.getDbInfo().getDbUrl() + "/" + myProperties.getDbInfo().getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC");
         dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
-        dataSourceConfig.setUsername(myProperties.getUserName());
-        dataSourceConfig.setPassword(myProperties.getPassword());
+        dataSourceConfig.setUsername(myProperties.getDbInfo().getUserName());
+        dataSourceConfig.setPassword(myProperties.getDbInfo().getPassword());
         // 3. 包配置
         PackageConfig packageConfig = new PackageConfig();
         packageConfig.setModuleName(myProperties.getModelName());
         packageConfig.setParent(myProperties.getPackageNamePrefix())                  // 设置包名, 以及各个分层的包名
-                .setMapper("dao")
+                .setMapper("dal")
                 .setService("service")
                 .setController("controller")
-                .setEntity("pojo.dataobject");
+                .setEntity("pojo.po");
         // .setXml("mapper");
         // 4. 策略配置
         // 配置自动填充字段
@@ -84,15 +83,17 @@ public class CodeGenerator {
         strategy.setCapitalMode(true)                               // 全局大写
                 .setRestControllerStyle(true)                       // 配置@RestController
                 .setNaming(NamingStrategy.underline_to_camel)       // 数据库表映射到实体的命名策略
-                .setTablePrefix(myProperties.getTablePrefix())                               // 设置表前缀，否则生成的文件会带表前缀
+                // todo 对应表是否需要去除前缀， 如果需要， 可以取消注释
+                // .setTablePrefix(myProperties.getTablePrefix())   // 去除前缀                          // 设置表前缀，否则生成的文件会带表前缀
                 .setSkipView(true)                                  // 跳过视图
                 .setEntityTableFieldAnnotationEnable(true)          // 生成注释
-                .setEntityLombokModel(true)                         // 启用 lombok
+                // todo 是否使用 lombok，如果需要，可以取消注释
+                // .setEntityLombokModel(false)                     // 启用 lombok
                 .setVersionFieldName("version")                     // 设置乐观锁字段
                 .setLogicDeleteFieldName("deleted")                 // 设置逻辑删除字段
                 .setTableFillList(tableFillList)                    // 自动填充字段
                 // .setInclude(scanner("表名，多个英文逗号分割").split(","));
-                .setInclude(myProperties.getTableNames());
+                .setInclude(myProperties.getDbInfo().getTableNames());
 
         // 5. 自定义注入配置
         InjectionConfig injectionConfig = new InjectionConfig() {

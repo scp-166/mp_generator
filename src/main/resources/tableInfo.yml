@@ -1,6 +1,7 @@
 # 开发者名称
 author: lyl
-
+# 是否使用 lombok
+lombok: false
 # db信息
 db:
   # 用户名
@@ -10,13 +11,13 @@ db:
   # db 账号
   dbUrl: 127.0.0.1:3306
   # 要读取的数据库名称
-  dbName: authority
+  dbName: test
   # 要读取的表名称，逗号分割
-  tableNames: sys_dept, sys_log, sys_permission, sys_role, sys_role_permission, sys_user, sys_user_role
-  # table表名
-  tablePrefix: sys_
+  tableNames: t_user
+  # table表名前缀，与表实体类前缀有关，对应功能默认关闭
+  tablePrefix: t_
 
 # 包前缀，模块名由控制台输入
-packageNamePrefix: com.nekosighed.authority
+packageNamePrefix: com.seed
 # 模块名，会补充包前缀后面和 mapper文件夹后面
-modelName: model
+modelName: module
