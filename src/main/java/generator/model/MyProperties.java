@@ -33,7 +33,6 @@ public class MyProperties {
         private String tablePrefix;
     }
 
-    // todo 价格 RawInfoPropertiesInfo 类
     public void loadInfo(RawPropertiesInfo rawPropertiesInfo) {
         if (Objects.isNull(dbInfo)) {
             dbInfo = new DB();
@@ -44,7 +43,6 @@ public class MyProperties {
 
         dbInfo.setUserName(
                 (String) rawPropertiesInfo.getDb().get("userName"));
-        // fixme 换下成员
         dbInfo.setPassword((String) rawPropertiesInfo.getDb().get("password"));
 
         dbInfo.setDbUrl(
